@@ -109,7 +109,7 @@ extern "C" {
 */
 #define SQLITE_VERSION        "3.8.7"
 #define SQLITE_VERSION_NUMBER 3008007
-#define SQLITE_SOURCE_ID      "2014-10-17 11:24:17 e4ab094f8afce0817f4074e823fabe59fc29ebb4"
+#define SQLITE_SOURCE_ID      "2014-09-25 14:22:40 72d926fd7a8ffce222d14fb576cd47c0cfe64db0"
 
 /*
 ** CAPI3REF: Run-Time Library Version Numbers
@@ -2669,9 +2669,9 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** an English language description of the error following a failure of any
 ** of the sqlite3_open() routines.
 **
-** ^The default encoding will be UTF-8 for databases created using
-** sqlite3_open() or sqlite3_open_v2().  ^The default encoding for databases
-** created using sqlite3_open16() will be UTF-16 in the native byte order.
+** ^The default encoding for the database will be UTF-8 if
+** sqlite3_open() or sqlite3_open_v2() is called and
+** UTF-16 in the native byte order if sqlite3_open16() is used.
 **
 ** Whether or not an error occurs when it is opened, resources
 ** associated with the [database connection] handle should be released by
@@ -2759,14 +2759,13 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 ** then it is interpreted as an absolute path. ^If the path does not begin 
 ** with a '/' (meaning that the authority section is omitted from the URI)
 ** then the path is interpreted as a relative path. 
-** ^(On windows, the first component of an absolute path 
-** is a drive specification (e.g. "C:").)^
+** ^On windows, the first component of an absolute path 
+** is a drive specification (e.g. "C:").
 **
 ** [[core URI query parameters]]
 ** The query component of a URI may contain parameters that are interpreted
 ** either by SQLite itself, or by a [VFS | custom VFS implementation].
-** SQLite and its built-in [VFSes] interpret the
-** following query parameters:
+** SQLite interprets the following three query parameters:
 **
 ** <ul>
 **   <li> <b>vfs</b>: ^The "vfs" parameter may be used to specify the name of
@@ -2801,9 +2800,11 @@ SQLITE_API void sqlite3_progress_handler(sqlite3*, int, int(*)(void*), void*);
 **     a URI filename, its value overrides any behavior requested by setting
 **     SQLITE_OPEN_PRIVATECACHE or SQLITE_OPEN_SHAREDCACHE flag.
 **
-**  <li> <b>psow</b>: ^The psow parameter indicates whether or not the
+**  <li> <b>psow</b>: ^The psow parameter may be "true" (or "on" or "yes" or
+**     "1") or "false" (or "off" or "no" or "0") to indicate that the
 **     [powersafe overwrite] property does or does not apply to the
-**     storage media on which the database file resides.
+**     storage media on which the database file resides.  ^The psow query
+**     parameter only works for the built-in unix and Windows VFSes.
 **
 **  <li> <b>nolock</b>: ^The nolock parameter is a boolean query parameter
 **     which if set disables file locking in rollback journal modes.  This
@@ -3398,10 +3399,11 @@ typedef struct sqlite3_context sqlite3_context;
 ** contain embedded NULs.  The result of expressions involving strings
 ** with embedded NULs is undefined.
 **
-** ^The fifth argument to the BLOB and string binding interfaces
-** is a destructor used to dispose of the BLOB or
+** ^The fifth argument to sqlite3_bind_blob(), sqlite3_bind_text(), and
+** sqlite3_bind_text16() is a destructor used to dispose of the BLOB or
 ** string after SQLite has finished with it.  ^The destructor is called
-** to dispose of the BLOB or string even if the call to bind API fails.
+** to dispose of the BLOB or string even if the call to sqlite3_bind_blob(),
+** sqlite3_bind_text(), or sqlite3_bind_text16() fails.  
 ** ^If the fifth argument is
 ** the special value [SQLITE_STATIC], then SQLite assumes that the
 ** information is in static, unmanaged space and does not need to be freed.
@@ -3412,7 +3414,7 @@ typedef struct sqlite3_context sqlite3_context;
 ** ^The sixth argument to sqlite3_bind_text64() must be one of
 ** [SQLITE_UTF8], [SQLITE_UTF16], [SQLITE_UTF16BE], or [SQLITE_UTF16LE]
 ** to specify the encoding of the text in the third parameter.  If
-** the sixth argument to sqlite3_bind_text64() is not one of the
+** the sixth argument to sqlite3_bind_text64() is not how of the
 ** allowed values shown above, or if the text encoding is different
 ** from the encoding specified by the sixth parameter, then the behavior
 ** is undefined.
@@ -4448,7 +4450,7 @@ typedef void (*sqlite3_destructor_type)(void*);
 ** of the application-defined function to be NULL.
 **
 ** ^The sqlite3_result_text(), sqlite3_result_text16(),
-** sqlite3_result_text16le(), and sqlite3_result_text16be() interfaces
+** sqlite3_result_text16le(), and sqlite3_result_text16be()
 ** set the return value of the application-defined function to be
 ** a text string which is represented as UTF-8, UTF-16 native byte order,
 ** UTF-16 little endian, or UTF-16 big endian, respectively.
@@ -6208,7 +6210,7 @@ SQLITE_API int sqlite3_test_control(int op, ...);
 #define SQLITE_TESTCTRL_ISKEYWORD               16
 #define SQLITE_TESTCTRL_SCRATCHMALLOC           17
 #define SQLITE_TESTCTRL_LOCALTIME_FAULT         18
-#define SQLITE_TESTCTRL_EXPLAIN_STMT            19  /* NOT USED */
+#define SQLITE_TESTCTRL_EXPLAIN_STMT            19
 #define SQLITE_TESTCTRL_NEVER_CORRUPT           20
 #define SQLITE_TESTCTRL_VDBE_COVERAGE           21
 #define SQLITE_TESTCTRL_BYTEORDER               22

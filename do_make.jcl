@@ -4,6 +4,6 @@
 //STDIN    DD   PATH='/dev/null',PATHOPTS=(ORDONLY)
 //STDERR   DD   SYSOUT=*
 //STDPARM  DD   *
-SH cd ~/projects/sqlite-v3r8m7 && make
+SH cd ~/projects/sqlite-v3r8m7 && { make clean; make; } 
 /*
 //
